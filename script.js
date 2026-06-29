@@ -1,13 +1,10 @@
-let cart = 0;
 const boxes = document.querySelectorAll(".box");
-const cartBadge = document.querySelector(".cart-badge");
-
 const searchInput = document.querySelector(".search-input");
 const searchBtn = document.querySelector(".search-icon");
 
+// Modal create karo
 const modal = document.createElement("div");
 modal.classList.add("modal");
-
 modal.innerHTML = `
 <div class="modal-box">
     <span id="close">&times;</span>
@@ -15,14 +12,11 @@ modal.innerHTML = `
     <h3 id="modal-title"></h3>
 </div>
 `;
-
 document.body.appendChild(modal);
 
 const modalImg = document.getElementById("modal-img");
 const modalTitle = document.getElementById("modal-title");
 const closeBtn = document.getElementById("close");
-
-
 
 const relatedImages = {
     "clothes": ["box1_image.jpg", "box8_image.jpg"],
@@ -35,127 +29,80 @@ const relatedImages = {
     "fashion": ["box8_image.jpg", "box1_image.jpg"]
 };
 
-
-
+// Box click - modal open
 boxes.forEach(box => {
     box.addEventListener("click", () => {
-
         let title = box.querySelector("h2").innerText;
         let img = box.querySelector(".box-img").style.backgroundImage;
         let url = img.replace('url("', '').replace('")', '');
-
-
-        cartBadge.innerText = cart;
-
         modal.style.display = "flex";
         modalImg.src = url;
         modalTitle.innerText = title;
     });
 });
 
-
-
+// Modal close
 closeBtn.addEventListener("click", () => {
     modal.style.display = "none";
 });
 
+// Modal bahar click karo to band ho
+modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+        modal.style.display = "none";
+    }
+});
 
-
+// Search
 searchBtn.addEventListener("click", () => {
-
     let value = searchInput.value.toLowerCase().trim();
-
     let foundKey = Object.keys(relatedImages).find(key =>
         key.includes(value)
     );
-
     if (!foundKey) {
         alert("Product not found");
         return;
     }
-
     let images = relatedImages[foundKey];
-
     let newTab = window.open("", "_blank");
-
     newTab.document.write(`
         <html>
         <head>
             <title>${foundKey.toUpperCase()}</title>
-           
         </head>
-
-        <body>
-
-            <h1>${foundKey.toUpperCase()}</h1>
-
-            <img class="main-img" src="${images[0]}" />
-
+        <body style="font-family:Arial; text-align:center; background:#f4f4f4;">
+            <h1 style="background:black; color:white; padding:15px;">${foundKey.toUpperCase()}</h1>
+            <img style="width:300px; margin-top:20px;" src="${images[0]}" />
             <h3>Related Products</h3>
-
-            <div class="grid">
-                ${images.map(img => `<img src="${img}">`).join("")}
+            <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:20px;">
+                ${images.map(img => `<img style="width:150px; border-radius:10px;" src="${img}">`).join("")}
             </div>
-
         </body>
         </html>
     `);
 });
 
-
-
-
-
-
-// ===============================
-// USER INFO (ONLY ONCE)
-// ===============================
-if (!localStorage.getItem("userInfo")) {
-    let name = prompt("Enter your Name:");
-    let address = prompt("Enter your Address:");
-    let phone = prompt("Enter your Phone Number:");
-
-    localStorage.setItem("userInfo", JSON.stringify({
-        name,
-        address,
-        phone
-    }));
-}
-
-// ===============================
-// WAIT UNTIL PAGE LOAD (IMPORTANT FIX)
-// ===============================
+// ===== CART & BUY NOW =====
 window.addEventListener("DOMContentLoaded", () => {
-
     let cart = 0;
     const cartBadge = document.querySelector(".cart-badge");
     const buyButtons = document.querySelectorAll(".buy-btn");
 
-    // show initial cart
     cartBadge.innerText = cart;
 
-    // BUY NOW FUNCTION
     buyButtons.forEach(btn => {
         btn.addEventListener("click", function (event) {
-
             event.stopPropagation();
-
             cart++;
             cartBadge.innerText = cart;
-
             const oldText = this.innerText;
             this.innerText = "Added ✓";
             this.style.backgroundColor = "green";
-
             alert("Product Added to Cart!");
-
             setTimeout(() => {
                 this.innerText = oldText;
                 this.style.backgroundColor = "";
             }, 1000);
         });
     });
-
 });
-
-
